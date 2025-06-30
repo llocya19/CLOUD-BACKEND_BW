@@ -1,7 +1,10 @@
-# Imagen base
+# Imagen base oficial de Python
 FROM python:3.10-slim
 
-# Instalación de dependencias del sistema necesarias para WeasyPrint y mysqlclient
+# Instala dependencias del sistema necesarias para:
+# - Compilar paquetes (build-essential)
+# - mysqlclient (default-libmysqlclient-dev, pkg-config)
+# - WeasyPrint (librerías de renderizado)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev \
@@ -24,15 +27,15 @@ RUN apt-get update && apt-get install -y \
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos del proyecto
+# Copia todos los archivos del proyecto al contenedor
 COPY . .
 
 # Instala dependencias Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Exponer puerto
+# Expone el puerto (Fly.io usa 8080)
 EXPOSE 8080
 
-# Comando para ejecutar la app
+# Ejecuta la aplicación con Gunicorn en el puerto 8080
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "run:app"]
