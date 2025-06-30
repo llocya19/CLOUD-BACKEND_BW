@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Boleta</title>
+  <style>
+    @page {
+      size: 75mm auto;
+      margin: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #000;
+      margin: 10px;
+      width: 100%;
+    }
+
+    .text-center { text-align: center; }
+    .bold { font-weight: bold; }
+    .logo {
+      width: 100px;
+      height: auto;
+      margin: auto;
+      display: block;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px dashed #000;
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+    }
+
+    th, td {
+      padding: 2px 4px;
+    }
+
+    .total td {
+      text-align: right;
+      padding-right: 10px;
+    }
+
+    .qr {
+      margin: 10px auto;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="text-center">
+    {% if logo_url %}
+      <img src="{{ logo_url }}" class="logo" alt="Logo">
+    {% endif %}
+    <div class="bold">{{ empresa.nombre_comercial }}</div>
+    <div>RUC: {{ empresa.ruc }}</div>
+    <div>{{ empresa.direccion }}</div>
+    <div>Tel: {{ empresa.telefono }}</div>
+    <div>Correo: {{ empresa.correo }}</div>
+    <div>Web: {{ empresa.web }}</div>
+  </div>
+
+  <hr>
+
+  <div class="text-center">
+    <div class="bold">BOLETA DE VENTA ELECTRÓNICA</div>
+    <div>B002 - {{ venta.id }}</div>
+  </div>
+
+  <hr>
+
+  <div>
+    <div><strong>{{ venta.nombre }}</strong></div>
+    <div>DNI/RUC: {{ venta.dni or venta.ruc }}</div>
+    <div>Fecha: {{ venta.fecha_venta.strftime('%d/%m/%Y') }} Hora: {{ venta.fecha_venta.strftime('%I:%M %p') }}</div>
+  </div>
+
+  <hr>
+  <strong>Detalle</strong>
+  <table>
+    <thead>
+      <tr>
+        <th>Cant</th>
+        <th>Producto</th>
+        <th>P.U.</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in productos %}
+      <tr>
+        <td>{{ item.cantidad }}</td>
+        <td>{{ item.nombre }}</td>
+        <td>S/. {{ '%.2f' % item.precio_unitario }}</td>
+        <td>S/. {{ '%.2f' % item.subtotal }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+  <table>
+    <tr>
+      <td>Total Gravado:</td>
+      <td class="text-end">S/. {{ '%.2f' % (venta.total / 1.18) }}</td>
+    </tr>
+    <tr>
+      <td>IGV (18%):</td>
+      <td class="text-end">S/. {{ '%.2f' % (venta.total - (venta.total / 1.18)) }}</td>
+    </tr>
+    <tr>
+      <td class="bold">TOTAL:</td>
+      <td class="bold text-end">S/. {{ '%.2f' % venta.total }}</td>
+    </tr>
+    <tr>
+      <td>PAGO:</td>
+      <td class="text-end">S/. {{ '%.2f' % venta.monto_pagado }}</td>
+    </tr>
+    <tr>
+      <td>CAMBIO:</td>
+      <td class="text-end">S/. {{ '%.2f' % venta.cambio }}</td>
+    </tr>
+  </table>
+
+  <p><strong>SON:</strong> {{ total_letras }}</p>
+
+  <p>
+    FORMA DE PAGO: EFECTIVO<br>
+    COND. VENTA: CONTADO<br>
+    Observaciones:
+  </p>
+
+  <div class="qr">
+    <p>QR</p>
+  </div>
+
+  <div class="footer">
+    Representación impresa de la BOLETA DE VENTA ELECTRÓNICA<br>
+    Puede consultarse en: www.mifact.net<br>
+    Autorizado mediante Resolución 034-005-0007241
+  </div>
+
+</body>
+</html>
