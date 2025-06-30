@@ -1,7 +1,7 @@
 # Imagen base
 FROM python:3.10-slim
 
-# Instalación de dependencias del sistema necesarias para WeasyPrint y MySQL
+# Instalación de dependencias del sistema necesarias para WeasyPrint y mysqlclient
 RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev \
@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install -y \
     libxslt1.1 \
     libjpeg-dev \
     libpq-dev \
-    default-libmysqlclient-dev \  
-    curl \ 
+    default-libmysqlclient-dev \
+    pkg-config \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
