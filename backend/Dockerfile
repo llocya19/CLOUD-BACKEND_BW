@@ -1,10 +1,9 @@
-# Imagen base oficial de Python
+# Imagen base oficial
 FROM python:3.10-slim
 
 # Instala dependencias del sistema necesarias para:
-# - Compilar paquetes (build-essential)
-# - mysqlclient (default-libmysqlclient-dev, pkg-config)
-# - WeasyPrint (librerías de renderizado)
+# - mysqlclient (default-libmysqlclient-dev, libmysqlclient-dev, pkg-config)
+# - WeasyPrint (renderizado PDF y dependencias gráficas)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev \
@@ -19,23 +18,23 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpq-dev \
     default-libmysqlclient-dev \
+    libmysqlclient-dev \
     pkg-config \
     curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia todos los archivos del proyecto al contenedor
+# Copia todo el proyecto
 COPY . .
 
 # Instala dependencias Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Expone el puerto (Fly.io usa 8080)
+# Expone el puerto usado por Fly.io
 EXPOSE 8080
 
-# Ejecuta la aplicación con Gunicorn en el puerto 8080
+# Ejecuta la app Flask con gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "run:app"]
