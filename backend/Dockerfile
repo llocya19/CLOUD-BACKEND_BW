@@ -1,7 +1,7 @@
 # Imagen base
 FROM python:3.10-slim
 
-# Instalación de dependencias del sistema necesarias para WeasyPrint
+# Instalación de dependencias del sistema necesarias para WeasyPrint y MySQL
 RUN apt-get update && apt-get install -y \
     build-essential \
     libffi-dev \
@@ -15,22 +15,23 @@ RUN apt-get update && apt-get install -y \
     libxslt1.1 \
     libjpeg-dev \
     libpq-dev \
-    curl \
+    default-libmysqlclient-dev \  
+    curl \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia todos los archivos
+# Copia los archivos del proyecto
 COPY . .
 
 # Instala dependencias Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Exponer el puerto (Fly.io usa 8080 por defecto)
+# Exponer puerto
 EXPOSE 8080
 
-# Comando para ejecutar la app (ajustado si usas Flask)
+# Comando para ejecutar la app
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "run:app"]
