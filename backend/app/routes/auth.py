@@ -8,7 +8,7 @@ from app.models import usuarios
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/api/login', methods=['POST'], endpoint='login')  # ✅ endpoint explícito
-@cross_origin()
+
 def login():
     data = request.get_json()
     email = data.get('email')
@@ -31,7 +31,7 @@ def login():
 
 
 @auth_bp.route('/api/verificar-otp', methods=['POST'], endpoint='verificar_otp')  # ✅ endpoint explícito
-@cross_origin()
+
 def verificar_otp():
     data = request.get_json()
     user_id = data.get('user_id')
@@ -71,7 +71,7 @@ def verificar_otp():
 from flask import session
 
 @auth_bp.route('/api/logout', methods=['POST'], endpoint='logout')
-@cross_origin()
+
 def logout():
     session.clear()
     return jsonify({'message': 'Sesión cerrada exitosamente'}), 200

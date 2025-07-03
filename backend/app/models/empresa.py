@@ -17,6 +17,7 @@ def actualizar_empresa(cursor, data):
         data['correo'],
         data['web'],
         data['logo']
+        
     ))
 def obtener_empresa(cursor):
     cursor.execute("SELECT * FROM empresa WHERE id = 1")

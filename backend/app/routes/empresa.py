@@ -50,6 +50,8 @@ def actualizar_empresa():
 
         modelo.actualizar_empresa(cursor, data)
         db.commit()
+        print("🧾 Datos recibidos:", data)
+
         return jsonify({'mensaje': 'Datos de empresa actualizados'}), 200
 
     except Exception as e:
