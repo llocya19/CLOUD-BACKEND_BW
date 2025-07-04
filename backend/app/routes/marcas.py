@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify
 from app.database import get_db
 from app.models import marcas
 import re
-
+from app.extensions import cache
 marcas_bp = Blueprint('marcas', __name__)
 
 @marcas_bp.route('/api/marcas', methods=['GET'])
+@cache.cached(timeout=300) 
 def listar_marcas():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)

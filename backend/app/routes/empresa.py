@@ -3,7 +3,7 @@ from app.database import get_db
 from app.models import empresa as modelo
 import os
 from werkzeug.utils import secure_filename
-
+from app.extensions import cache
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '..', '..', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -11,6 +11,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 empresa_bp = Blueprint('empresa', __name__)
 
 @empresa_bp.route('/api/empresa', methods=['GET'])
+@cache.cached(timeout=300) 
 def obtener_empresa():
     db = get_db()
     cursor = db.cursor(dictionary=True)

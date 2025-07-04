@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from app.extensions import mail
+from app.extensions import mail,cache
 from app.config import Config
 from flask_wtf.csrf import CSRFProtect
 import os
@@ -42,9 +42,10 @@ def create_app():
 
     mail.init_app(app)
     csrf.init_app(app)
+    cache.init_app(app)
 
-    csrf.exempt("login")
-    csrf.exempt("verificar_otp")
+    csrf.exempt("auth.login")
+    csrf.exempt("auth.verificar_otp")
 
     # Blueprints (no olvides mantener todos)
     app.register_blueprint(roles_bp)

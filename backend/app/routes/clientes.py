@@ -1,12 +1,8 @@
 # backend/app/models/clientes.py
 from app.utils.api_clientes import consultar_dni_api
 
-
-
-
-
 # backend/app/routes/clientes.py
-
+from app.extensions import cache
 from flask import Blueprint, request, jsonify
 from app.models import clientes
 from app.database import get_db
@@ -14,6 +10,7 @@ from app.database import get_db
 clientes_bp = Blueprint('clientes', __name__)
 
 @clientes_bp.route('/api/clientes', methods=['GET'])
+@cache.cached(timeout=120)
 def listar_clientes():
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -21,6 +18,7 @@ def listar_clientes():
     return jsonify(resultado), 200
 
 @clientes_bp.route('/api/clientes/<int:id>', methods=['GET'])
+@cache.cached(timeout=120)
 def obtener_cliente(id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -28,6 +26,7 @@ def obtener_cliente(id):
     return jsonify(resultado), 200 if resultado else 404
 
 @clientes_bp.route('/api/clientes/duplicado', methods=['GET'])
+@cache.cached(timeout=120)
 def verificar_duplicado():
     campo = request.args.get('campo')
     valor = request.args.get('valor')
@@ -131,6 +130,7 @@ def eliminar_cliente(id):
         db.rollback()
         return jsonify({'error': str(e)}), 500
 @clientes_bp.route('/api/clientes/por-documento/<numero>', methods=['GET'])
+@cache.cached(timeout=120)
 def obtener_cliente_por_documento(numero):
     db = get_db()
     cursor = db.cursor(dictionary=True)

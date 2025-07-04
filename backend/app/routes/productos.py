@@ -4,18 +4,22 @@ from app.models import productos
 from app.database import get_db
 from werkzeug.utils import secure_filename
 from app.config import allowed_file
+from app.extensions import cache
 import os
 
 productos_bp = Blueprint('productos', __name__)
 
 @productos_bp.route('/api/productos', methods=['GET'])
+@cache.cached(timeout=180) 
 def listar_productos():
+    print("⚠️ Se consultó la base de datos (NO caché)")
     db = get_db()
     cursor = db.cursor(dictionary=True)
     lista = productos.obtener_todos(cursor)
     return jsonify(lista), 200
 
 @productos_bp.route('/api/productos/<int:id>', methods=['GET'])
+@cache.cached(timeout=180) 
 def obtener_producto(id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -131,6 +135,7 @@ def crear_producto_con_imagen():
         return jsonify({'error': str(e)}), 500
 
 @productos_bp.route('/api/productos/duplicado', methods=['GET'])
+
 def verificar_duplicado_producto():
     campo = request.args.get('campo')
     valor = request.args.get('valor')
@@ -145,6 +150,7 @@ def verificar_duplicado_producto():
 
     return jsonify({'existe': existe}), 200
 @productos_bp.route('/api/productos/por-codigo/<codigo_barra>', methods=['GET'])
+@cache.cached(timeout=60) 
 def buscar_producto_por_codigo_barra(codigo_barra):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -157,6 +163,7 @@ def buscar_producto_por_codigo_barra(codigo_barra):
         return jsonify({'error': 'Producto no encontrado'}), 404
 
 @productos_bp.route('/api/productos/stock-bajo', methods=['GET'])
+@cache.cached(timeout=60) 
 def productos_stock_bajo():
     db = get_db()
     cursor = db.cursor(dictionary=True)

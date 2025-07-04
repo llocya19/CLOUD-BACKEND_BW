@@ -4,10 +4,11 @@ import re
 from flask import Blueprint, request, jsonify
 from app.database import get_db
 from app.models import roles
-
+from app.extensions import cache
 roles_bp = Blueprint('roles', __name__)
 
 @roles_bp.route('/api/roles', methods=['GET'])
+@cache.cached(timeout=300) 
 def listar_roles():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
@@ -17,6 +18,7 @@ def listar_roles():
     return jsonify(data)
 
 @roles_bp.route('/api/modulos', methods=['GET'])
+@cache.cached(timeout=300) 
 def listar_modulos():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)

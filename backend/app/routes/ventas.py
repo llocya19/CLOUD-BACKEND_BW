@@ -10,6 +10,7 @@ from flask import render_template, make_response
 from weasyprint import HTML
 import io
 from app.models import empresa as modelo_empresa
+from app.extensions import cache
 
 ventas_bp = Blueprint('ventas', __name__)
 
@@ -101,6 +102,7 @@ def registrar_venta():
 
 
 @ventas_bp.route('/api/ventas', methods=['GET'])
+@cache.cached(timeout=60) 
 def listar_ventas():
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -125,6 +127,7 @@ def listar_ventas():
 
 
 @ventas_bp.route('/api/ventas/<int:id>', methods=['GET'])
+@cache.cached(timeout=60) 
 def detalle_venta(id):
     db = get_db()
     cursor = db.cursor(dictionary=True)

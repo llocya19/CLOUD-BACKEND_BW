@@ -4,10 +4,11 @@ from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash
 from app.database import get_db
 from app.models import usuarios
-
+from app.extensions import cache
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/api/usuarios', methods=['GET'])
+@cache.cached(timeout=180)
 def listar_usuarios():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
@@ -15,6 +16,7 @@ def listar_usuarios():
     return jsonify(data)
 
 @usuarios_bp.route('/api/usuarios', methods=['POST'])
+
 def agregar_usuario():
     data = request.get_json()
     nombre = data.get('nombre', '').strip()
@@ -74,18 +76,21 @@ def eliminar_usuario(id):
     return jsonify({'message': 'Usuario eliminado correctamente.'}), 200
 
 @usuarios_bp.route('/api/roles', methods=['GET'])
+@cache.cached(timeout=300) 
 def obtener_roles():
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     return jsonify(usuarios.get_roles(cursor))
 
 @usuarios_bp.route('/api/usuarios/<int:id>/roles', methods=['GET'])
+@cache.cached(timeout=180) 
 def obtener_roles_usuario(id):
     conn = get_db()
     cursor = conn.cursor()
     return jsonify(usuarios.get_roles_por_usuario(cursor, id))
 
 @usuarios_bp.route('/api/usuarios/<int:id>', methods=['GET'])
+@cache.cached(timeout=180) 
 def obtener_usuario(id):
     conn = get_db()
     cursor = conn.cursor(dictionary=True)

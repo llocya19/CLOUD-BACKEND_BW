@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from app.database import get_db
 from app.models import categorias
 import re
-
+from app.extensions import cache
 categorias_bp = Blueprint('categorias', __name__)
 
 @categorias_bp.route('/api/categorias', methods=['GET'])

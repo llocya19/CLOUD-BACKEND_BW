@@ -1,14 +1,14 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from werkzeug.security import check_password_hash
 from app.database import get_db
 from app.utils.otp import crear_y_enviar_otp
-from flask_cors import cross_origin
 from app.models import usuarios
 
-auth_bp = Blueprint('auth', __name__)
+# ✅ Ruta base /api para todas las rutas del auth
+auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 
-@auth_bp.route('/api/login', methods=['POST'], endpoint='login')  # ✅ endpoint explícito
 
+@auth_bp.route('/login', methods=['POST'], endpoint='login')
 def login():
     data = request.get_json()
     email = data.get('email')
@@ -30,8 +30,7 @@ def login():
     return jsonify({'message': 'OTP enviado', 'user_id': user['id']}), 200
 
 
-@auth_bp.route('/api/verificar-otp', methods=['POST'], endpoint='verificar_otp')  # ✅ endpoint explícito
-
+@auth_bp.route('/verificar-otp', methods=['POST'], endpoint='verificar_otp')
 def verificar_otp():
     data = request.get_json()
     user_id = data.get('user_id')
@@ -68,10 +67,9 @@ def verificar_otp():
     user['modulos'] = usuarios.get_user_modules(cursor, user_id)
 
     return jsonify({'message': 'OTP verificado', 'user': user}), 200
-from flask import session
 
-@auth_bp.route('/api/logout', methods=['POST'], endpoint='logout')
 
+@auth_bp.route('/logout', methods=['POST'], endpoint='logout')
 def logout():
     session.clear()
     return jsonify({'message': 'Sesión cerrada exitosamente'}), 200
