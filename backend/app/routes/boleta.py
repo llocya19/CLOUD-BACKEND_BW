@@ -13,7 +13,7 @@ from app.extensions import cache
 boleta_bp = Blueprint('boleta', __name__)
 
 @boleta_bp.route('/api/ventas/<int:id>/boleta', methods=['GET'])
-@cache.cached(timeout=120)
+@cache.cached(timeout=1200)
 def generar_boleta(id):
     db = get_db()
     cursor = db.cursor(dictionary=True)

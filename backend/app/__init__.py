@@ -18,7 +18,7 @@ from app.routes.boleta import boleta_bp
 from app.routes.auth import auth_bp
 from app.routes.modulos import modulos_bp
 from app.routes.csrf import csrf_bp
-from app.routes.auth import login, verificar_otp
+from app.routes.auth import login, verificar_otp, logout
 csrf = CSRFProtect()
 
 def create_app():
@@ -43,9 +43,12 @@ def create_app():
     mail.init_app(app)
     csrf.init_app(app)
     cache.init_app(app)
+    
 
     csrf.exempt("auth.login")
     csrf.exempt("auth.verificar_otp")
+    csrf.exempt("auth.logout")
+
 
     # Blueprints (no olvides mantener todos)
     app.register_blueprint(roles_bp)

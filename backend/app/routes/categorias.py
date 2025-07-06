@@ -5,8 +5,10 @@ from app.database import get_db
 from app.models import categorias
 import re
 from app.extensions import cache
+
 categorias_bp = Blueprint('categorias', __name__)
 
+# ✅ Listar todas las categorías
 @categorias_bp.route('/api/categorias', methods=['GET'])
 def listar_categorias():
     conn = get_db()
@@ -14,6 +16,7 @@ def listar_categorias():
     data = categorias.get_all_categorias(cursor)
     return jsonify(data)
 
+# ✅ Agregar una nueva categoría
 @categorias_bp.route('/api/categorias', methods=['POST'])
 def agregar_categoria():
     data = request.get_json()
@@ -27,7 +30,7 @@ def agregar_categoria():
         return jsonify({'error': 'El nombre solo debe contener letras y espacios.'}), 400
 
     conn = get_db()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)  # ✅ Corregido
     if categorias.get_categoria_by_nombre(cursor, nombre):
         return jsonify({'error': 'Ya existe una categoría con ese nombre.'}), 409
 
@@ -35,6 +38,7 @@ def agregar_categoria():
     conn.commit()
     return jsonify({'message': 'Categoría registrada exitosamente.'}), 201
 
+# ✅ Editar categoría existente
 @categorias_bp.route('/api/categorias/<int:id>', methods=['PUT'])
 def editar_categoria(id):
     data = request.get_json()
@@ -48,8 +52,9 @@ def editar_categoria(id):
         return jsonify({'error': 'El nombre solo debe contener letras y espacios.'}), 400
 
     conn = get_db()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)  # ✅ Corregido
     existente = categorias.get_categoria_by_nombre(cursor, nombre)
+
     if existente and existente['id'] != id:
         return jsonify({'error': 'Ya existe una categoría con ese nombre.'}), 409
 
@@ -57,6 +62,7 @@ def editar_categoria(id):
     conn.commit()
     return jsonify({'message': 'Categoría actualizada correctamente.'}), 200
 
+# ✅ Eliminar categoría por ID
 @categorias_bp.route('/api/categorias/<int:id>', methods=['DELETE'])
 def eliminar_categoria(id):
     conn = get_db()

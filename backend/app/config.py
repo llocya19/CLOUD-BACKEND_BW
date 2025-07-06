@@ -10,8 +10,8 @@ UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'u
 
 class Config:
     # 🔐 Seguridad general
-    SECRET_KEY = 'clave-super-secreta-llocya-2025'
-    WTF_CSRF_ENABLED = True
+    SECRET_KEY = os.getenv("SECRET_KEY", "valor-por-defecto")
+    WTF_CSRF_ENABLED = os.getenv("WTF_CSRF_ENABLED", "True") == "True"
     WTF_CSRF_METHODS = ["POST", "PUT", "DELETE"]
 
     # 🧠 Configuración CORS para cookies en frontend externo (Hostinger)
@@ -41,6 +41,9 @@ class Config:
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+   
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_URL = os.getenv("REDIS_URL")
 
 
 # ✅ Función para validar extensiones de archivos subidos (solo imágenes)
